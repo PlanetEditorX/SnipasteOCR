@@ -1,6 +1,6 @@
 snipaste:
-  modelpath:
-  path:
+  modelpath: models
+  path: C:\Users\DearX\Pictures\Saved Pictures
   preview_enabled: true
 translation:
   from_lang: auto

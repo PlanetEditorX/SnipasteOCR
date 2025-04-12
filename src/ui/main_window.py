@@ -1,7 +1,7 @@
 import os
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QIcon, QCursor, QAction, QPalette
-from PyQt6.QtWidgets import (QMainWindow, QVBoxLayout, QLabel, QWidget, 
+from PyQt6.QtWidgets import (QMainWindow, QVBoxLayout, QLabel, QWidget,
                           QMenu, QSystemTrayIcon, QFrame, QMessageBox, QHBoxLayout, QLineEdit, QPushButton, QFileDialog, QDialog, QFormLayout, QDialogButtonBox, QComboBox, QApplication)
 import logging
 import yaml
@@ -24,15 +24,15 @@ class MainWindow(QMainWindow):
         super().__init__()
         # Initialize logging
         setup_logging()
-        
+
         # 创建中心部件
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
-        
+
         self.ocrThread = None
         self.preview_window = None
         self.preview_enabled = True
-        
+
         # 添加翻译设置
         self.translation_settings = {
             'secret_id': '',
@@ -40,18 +40,18 @@ class MainWindow(QMainWindow):
             'from_lang': 'auto',
             'to_lang': 'zh'
         }
-        
+
         # 检测系统是否为暗色模式
         self.is_dark_mode = self.check_dark_mode()
-        
+
         self.initUI()
         self.initData()
         self.initStyle()
         self.initLayout()
-        
+
         # 创建翻译设置菜单
         self.create_translation_settings_menu()
-        
+
     def initUI(self):
         self.setObjectName("MainWindow")
         self.setGeometry(0, 0, 450, 300)
@@ -61,20 +61,20 @@ class MainWindow(QMainWindow):
         icon_path = get_resource_path('assets/icon.png')
         self.setWindowIcon(QIcon(icon_path))
         self.setWindowTitle('SnipasteOCR')
-        
+
         # 初始化到屏幕中间
         screen = QApplication.primaryScreen().geometry()
         size = self.geometry()
         self.move(int((screen.width() - size.width()) / 2), int((screen.height() - size.height()) / 2))
-        
+
         self.setupMainWindow()
         self.setupTrayIcon()
-        
+
     def create_translation_settings_menu(self):
         # 创建设置菜单
         menubar = self.menuBar()
         settings_menu = menubar.addMenu('设置')
-        
+
         # 添加翻译设置选项
         translation_action = QAction('翻译设置', self)
         translation_action.triggered.connect(self.show_translation_settings)
@@ -87,45 +87,45 @@ class MainWindow(QMainWindow):
         # 系统托盘
         self.trayIconMenu = QMenu(self)
         self.trayIconMenu.setObjectName("trayMenu")
-        
+
         # 添加程序标题（不可点击）
         titleAction = QAction(APP_NAME, self)
         titleAction.setIcon(QIcon(get_resource_path('assets/icon.png')))
         titleAction.setEnabled(False)
         self.trayIconMenu.addAction(titleAction)
-        
+
         self.trayIconMenu.addSeparator()
-        
+
         # 显示/隐藏主窗口
         self.toggleWindowAction = QAction("显示主窗口", self)
         self.toggleWindowAction.setIcon(QIcon(get_resource_path('assets/icon.png')))
         self.toggleWindowAction.triggered.connect(self.toggleWindow)
         self.trayIconMenu.addAction(self.toggleWindowAction)
-        
+
         # 重启选项
         restartAction = QAction("重启程序", self)
         restartAction.setIcon(QIcon(get_resource_path('assets/icon.png')))
         restartAction.triggered.connect(self.restart)
         self.trayIconMenu.addAction(restartAction)
-        
+
         self.trayIconMenu.addSeparator()
-        
+
         # 添加帮助菜单
         helpMenu = QMenu("帮助", self)
         helpMenu.setIcon(QIcon(get_resource_path('assets/icon.png')))
-        
+
         aboutAction = QAction("关于", self)
         aboutAction.triggered.connect(self.showAbout)
         helpMenu.addAction(aboutAction)
-        
+
         usageAction = QAction("使用说明", self)
         usageAction.triggered.connect(self.showUsage)
         helpMenu.addAction(usageAction)
-        
+
         self.trayIconMenu.addMenu(helpMenu)
-        
+
         self.trayIconMenu.addSeparator()
-        
+
         # 退出选项
         self.quitAction = QAction("退出", self)
         self.quitAction.setIcon(QIcon(get_resource_path('assets/icon.png')))
@@ -150,11 +150,11 @@ class MainWindow(QMainWindow):
                     self.preview_button.setEnabled(True)
                     self.preview_button.setToolTip('')
             except Exception as e:
-                 logger.error(f"Failed to initialize or start OCR thread: {str(e)}")
-                 self.show_ocr_error(f"启动OCR服务时出错: {str(e)}\n请检查配置文件和模型路径。")
-                 if hasattr(self, 'preview_button'):
-                     self.preview_button.setEnabled(False)
-                     self.preview_button.setToolTip('OCR服务启动失败')
+                logger.error(f"Failed to initialize or start OCR thread: {str(e)}")
+                self.show_ocr_error(f"启动OCR服务时出错: {str(e)}\n请检查配置文件和模型路径。")
+                if hasattr(self, 'preview_button'):
+                    self.preview_button.setEnabled(False)
+                    self.preview_button.setToolTip('OCR服务启动失败')
 
     def initStyle(self):
         if self.is_dark_mode:
@@ -455,13 +455,13 @@ class MainWindow(QMainWindow):
         mainLayout = QVBoxLayout(self.central_widget)
         mainLayout.setContentsMargins(10, 10, 10, 10)
         mainLayout.setSpacing(10)
-        
+
         # 标题部分
         headerFrame = QFrame(self.central_widget)
         headerLayout = QVBoxLayout(headerFrame)
         headerLayout.setContentsMargins(10, 10, 10, 10)
         headerLayout.setSpacing(5)
-        
+
         # Logo和标题行
         titleLayout = QHBoxLayout()
         logoLabel = QLabel()
@@ -471,7 +471,7 @@ class MainWindow(QMainWindow):
         titleLayout.addWidget(logoLabel)
         titleLayout.addWidget(titleLabel)
         titleLayout.addStretch()
-        
+
         # 作者和GitHub链接行
         infoLayout = QHBoxLayout()
         authorLabel = QLabel("作者: formero009")
@@ -485,24 +485,24 @@ class MainWindow(QMainWindow):
         infoLayout.addWidget(githubLabel)
         infoLayout.addWidget(starLabel)
         infoLayout.addStretch()
-        
+
         # 说明文字
         descLabel = QLabel("这是一个基于Snipaste的OCR工具，可以自动识别截图中的文字。使用Snipaste截图后，程序会自动进行文字识别并复制到剪贴板。")
         descLabel.setObjectName("descLabel")
         descLabel.setWordWrap(True)
-        
+
         headerLayout.addLayout(titleLayout)
         headerLayout.addLayout(infoLayout)
         headerLayout.addWidget(descLabel)
-        
+
         mainLayout.addWidget(headerFrame)
-        
+
         # 路径设置布局
         pathFrame = QFrame(self.central_widget)
         pathLayout = QVBoxLayout(pathFrame)
         pathLayout.setContentsMargins(10, 10, 10, 10)
         pathLayout.setSpacing(10)
-        
+
         # Snipaste路径
         snipaste_layout = QHBoxLayout()
         snipaste_layout.setSpacing(5)
@@ -516,7 +516,7 @@ class MainWindow(QMainWindow):
         snipaste_layout.addWidget(snipaste_label)
         snipaste_layout.addWidget(self.snipaste_path)
         snipaste_layout.addWidget(snipaste_button)
-        
+
         # 模型路径
         model_layout = QHBoxLayout()
         model_layout.setSpacing(5)
@@ -530,37 +530,37 @@ class MainWindow(QMainWindow):
         model_layout.addWidget(model_label)
         model_layout.addWidget(self.model_path)
         model_layout.addWidget(model_button)
-        
+
         pathLayout.addLayout(snipaste_layout)
         pathLayout.addLayout(model_layout)
-        
+
         # 按钮布局
         buttonLayout = QHBoxLayout()
-        
+
         # 预览开关按钮
         self.preview_button = QPushButton('预览窗口：开启')
         self.preview_button.setObjectName("previewButton")
         self.preview_button.clicked.connect(self.toggle_preview)
         self.preview_button.setProperty("preview_off", not self.preview_enabled)
         buttonLayout.addWidget(self.preview_button)
-        
+
         # 自启动开关按钮
         self.autostart_button = QPushButton('开机自启：关闭')
         self.autostart_button.setObjectName("autostartButton")
         self.autostart_button.clicked.connect(self.toggle_autostart)
         buttonLayout.addWidget(self.autostart_button)
-        
+
         buttonLayout.addStretch()
-        
+
         # 保存按钮
         save_button = QPushButton('保存设置')
         save_button.clicked.connect(self.saveConfig)
         buttonLayout.addWidget(save_button)
-        
+
         pathLayout.addLayout(buttonLayout)
         mainLayout.addWidget(pathFrame)
         self.central_widget.setLayout(mainLayout)
-        
+
         # 加载配置
         self.loadConfig()
 
@@ -586,7 +586,7 @@ class MainWindow(QMainWindow):
                     self.ocrThread.terminate()
                     self.ocrThread.wait()
                 self.ocrThread = None
-            
+
             QApplication.quit()
         except Exception as e:
             logger.error(f"Error during quit: {str(e)}")
@@ -674,7 +674,7 @@ class MainWindow(QMainWindow):
         try:
             current_path = os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
             config_path = os.path.join(current_path, 'config.yml')
-            
+
             with open(config_path, 'r', encoding='utf-8') as f:
                 config = yaml.safe_load(f)
                 if hasattr(self, 'snipaste_path'):
@@ -694,10 +694,10 @@ class MainWindow(QMainWindow):
                     self.preview_button.setProperty("preview_off", not self.preview_enabled)
                     self.preview_button.style().unpolish(self.preview_button)
                     self.preview_button.style().polish(self.preview_button)
-                    
+
                 if hasattr(self, 'autostart_button'):
                     self.update_autostart_button()
-                
+
                 if 'translation' in config:
                     self.translation_settings.update({
                         'secret_id': config['translation'].get('secret_id', ''),
@@ -730,13 +730,13 @@ class MainWindow(QMainWindow):
         try:
             current_path = os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
             config_path = os.path.join(current_path, 'config.yml')
-            
+
             # 读取现有配置（如果存在）
             existing_config = {}
             if os.path.exists(config_path):
                 with open(config_path, 'r', encoding='utf-8') as f:
                     existing_config = yaml.safe_load(f) or {}
-            
+
             # 更新配置
             config = {
                 'snipaste': {
@@ -751,10 +751,10 @@ class MainWindow(QMainWindow):
                     'to_lang': self.translation_settings.get('to_lang', 'zh')
                 }
             }
-            
+
             # 合并配置
             existing_config.update(config)
-            
+
             # 保存配置
             with open(config_path, 'w', encoding='utf-8') as f:
                 yaml.dump(existing_config, f, allow_unicode=True)
@@ -767,7 +767,7 @@ class MainWindow(QMainWindow):
                     logger.warning("OCR thread did not exit in time, forcing termination")
                     self.ocrThread.terminate()
                     self.ocrThread.wait()
-            
+
             # 创建新的OCR线程
             self.ocrThread = OCRThread()
             self.ocrThread.preview_signal.connect(self.show_preview)
@@ -775,11 +775,11 @@ class MainWindow(QMainWindow):
             self.ocrThread.start()
 
             QMessageBox.information(self, '成功', '设置已保存并重新加载OCR服务')
-            
+
             # 重新启用预览按钮（如果之前被禁用）
             self.preview_button.setEnabled(True)
             self.preview_button.setToolTip('')
-            
+
         except Exception as e:
             logger.error(f"Failed to save configuration: {str(e)}")
             QMessageBox.warning(self, '错误', f'保存配置文件失败: {str(e)}')
@@ -805,12 +805,12 @@ class MainWindow(QMainWindow):
             logger.info(f"Relaunching: {program} {args}")
             if platform.system() == "Windows" and ' ' in program:
                  program = f'"{program}"'
-                 
+
             import subprocess
-            subprocess.Popen([program] + args) 
-            
+            subprocess.Popen([program] + args)
+
             QApplication.quit()
-            
+
         except Exception as e:
             logger.error(f"Failed to restart application: {str(e)}")
             QMessageBox.warning(self, '错误', f'重启程序失败: {str(e)}')
@@ -826,39 +826,39 @@ class MainWindow(QMainWindow):
         dialog = QDialog(self)
         dialog.setWindowTitle('翻译设置')
         layout = QFormLayout()
-        
+
         # SecretId输入
         secret_id_input = QLineEdit(self.translation_settings['secret_id'])
         secret_id_input.setEchoMode(QLineEdit.EchoMode.Password)
         layout.addRow('SecretId:', secret_id_input)
-        
+
         # SecretKey输入
         secret_key_input = QLineEdit(self.translation_settings['secret_key'])
         secret_key_input.setEchoMode(QLineEdit.EchoMode.Password)
         layout.addRow('SecretKey:', secret_key_input)
-        
+
         # 源语言选择
         from_lang_input = QComboBox()
         langs = [('auto', '自动检测'), ('zh', '中文'), ('en', '英文'), ('ja', '日文'), ('ko', '韩文')]
         for code, name in langs:
             from_lang_input.addItem(name, code)
-        
+
         # 设置当前选中的语言
         current_from_index = from_lang_input.findData(self.translation_settings['from_lang'])
         from_lang_input.setCurrentIndex(current_from_index if current_from_index >= 0 else 0)
         layout.addRow('源语言:', from_lang_input)
-        
+
         # 目标语言选择
         to_lang_input = QComboBox()
         target_langs = langs[1:]  # 移除'auto'选项
         for code, name in target_langs:
             to_lang_input.addItem(name, code)
-            
+
         # 设置当前选中的语言
         current_to_index = to_lang_input.findData(self.translation_settings['to_lang'])
         to_lang_input.setCurrentIndex(current_to_index if current_to_index >= 0 else 0)
         layout.addRow('目标语言:', to_lang_input)
-        
+
         # 按钮
         buttons = QDialogButtonBox(
             QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
@@ -866,9 +866,9 @@ class MainWindow(QMainWindow):
         buttons.accepted.connect(dialog.accept)
         buttons.rejected.connect(dialog.reject)
         layout.addRow(buttons)
-        
+
         dialog.setLayout(layout)
-        
+
         if dialog.exec() == QDialog.DialogCode.Accepted:
             self.translation_settings.update({
                 'secret_id': secret_id_input.text(),
@@ -880,14 +880,14 @@ class MainWindow(QMainWindow):
             self.saveConfig()
 
     def get_translation_settings(self):
-        return self.translation_settings.copy() 
+        return self.translation_settings.copy()
 
     def toggle_autostart(self):
         """切换开机自启动状态 (Cross-platform)"""
         current_os = platform.system()
         is_enabled = False
         set_successfully = False
-        
+
         try:
             if current_os == "Windows":
                 is_enabled = self._is_windows_autostart_enabled()
@@ -934,10 +934,10 @@ class MainWindow(QMainWindow):
                      self.autostart_button.setText('开机自启：不支持')
                      self.autostart_button.setProperty("autostart_off", True)
                      self.autostart_button.setEnabled(False)
-                 
+
                  self.autostart_button.style().unpolish(self.autostart_button)
                  self.autostart_button.style().polish(self.autostart_button)
-                 
+
         except Exception as e:
              logger.error(f"Failed to update autostart button state on {current_os}: {str(e)}")
              if hasattr(self, 'autostart_button'):
@@ -949,12 +949,12 @@ class MainWindow(QMainWindow):
         QMessageBox.warning(self, '错误', error_msg)
         if hasattr(self, 'preview_button'):
             self.preview_button.setEnabled(False)
-            self.preview_button.setToolTip('OCR服务未正常启动') 
+            self.preview_button.setToolTip('OCR服务未正常启动')
 
     def check_dark_mode(self):
         """检测系统是否处于暗色模式 (Cross-Platform)"""
         current_os = platform.system()
-        
+
         if current_os == "Windows":
              return self._check_windows_dark_mode()
         elif current_os == "Linux":
@@ -997,7 +997,7 @@ class MainWindow(QMainWindow):
             # Running as a script
              path = os.path.abspath(sys.argv[0])
              # If running via 'python -m src.main', argv[0] might be '-m'
-             if sys.argv[0] == '-m': 
+             if sys.argv[0] == '-m':
                  # Attempt to find the main script file path
                  import inspect
                  frame = inspect.currentframe()
@@ -1048,7 +1048,7 @@ class MainWindow(QMainWindow):
         key = self._get_windows_registry_key(winreg.KEY_ALL_ACCESS)
         if not key:
             raise OSError("Could not open registry key for writing.")
-        
+
         app_path = self._get_executable_path()
         try:
             if enabled:
@@ -1081,10 +1081,10 @@ class MainWindow(QMainWindow):
         try:
             if enabled:
                 autostart_dir.mkdir(parents=True, exist_ok=True)
-                
+
                 exec_path = self._get_executable_path()
                 icon_path = os.path.abspath(get_resource_path('assets/icon.png'))
-                
+
                 desktop_content = f"""[Desktop Entry]
 Type=Application
 Name={APP_NAME}
@@ -1105,4 +1105,4 @@ X-GNOME-Autostart-enabled=true
             return True
         except (OSError, PermissionError, Exception) as e:
             logger.error(f"Failed to set Linux autostart: {e}")
-            raise 
+            raise

@@ -22,7 +22,7 @@ class OCRProcessor:
         """
         setup_logging()
         logger.info(f"Initializing OCR processor with model path: {modelpath}")
-        
+
         self.det_model = os.path.join(modelpath, 'ch_PP-OCRv3_det_infer')
         self.rec_model = os.path.join(modelpath, 'ch_PP-OCRv3_rec_infer')
         self.cls_model = os.path.join(modelpath, 'ch_ppocr_mobile_v2.0_cls_infer')
@@ -44,10 +44,10 @@ class OCRProcessor:
         self.rec_label_file = self.label_file
 
         # Verify model files exist
-        for file_path in [self.det_model_file, self.det_params_file, 
-                         self.cls_model_file, self.cls_params_file,
-                         self.rec_model_file, self.rec_params_file,
-                         self.rec_label_file]:
+        for file_path in [self.det_model_file, self.det_params_file,
+                        self.cls_model_file, self.cls_params_file,
+                        self.rec_model_file, self.rec_params_file,
+                        self.rec_label_file]:
             if not os.path.exists(file_path):
                 logger.error(f"Model file not found: {file_path}")
                 raise FileNotFoundError(f"Model file not found: {file_path}")
@@ -75,22 +75,19 @@ class OCRProcessor:
 
             # 初始化检测模型
             det_option = option
-            det_option.set_trt_input_shape("x", [1, 3, 64, 64], [1, 3, 640, 640],
-                                       [1, 3, 960, 960])
+            det_option.set_trt_input_shape("x", [1, 3, 64, 64], [1, 3, 640, 640],[1, 3, 960, 960])
             det_model = fd.vision.ocr.DBDetector(
                 self.det_model_file, self.det_params_file, runtime_option=det_option)
 
             # 初始化分类模型
             cls_option = option
-            cls_option.set_trt_input_shape("x", [1, 3, 48, 10], [10, 3, 48, 320],
-                                           [64, 3, 48, 1024])
+            cls_option.set_trt_input_shape("x", [1, 3, 48, 10], [10, 3, 48, 320],[64, 3, 48, 1024])
             cls_model = fd.vision.ocr.Classifier(
                 self.cls_model_file, self.cls_params_file, runtime_option=cls_option)
 
             # 初始化识别模型
             rec_option = option
-            rec_option.set_trt_input_shape("x", [1, 3, 48, 10], [10, 3, 48, 320],
-                                           [64, 3, 48, 2304])
+            rec_option.set_trt_input_shape("x", [1, 3, 48, 10], [10, 3, 48, 320],[64, 3, 48, 2304])
             rec_model = fd.vision.ocr.Recognizer(
                 self.rec_model_file, self.rec_params_file, self.rec_label_file, runtime_option=rec_option)
 
@@ -109,9 +106,9 @@ class OCRProcessor:
             content = self._parse_result(result)
             self._save_to_file(image_path.replace('.png', '.txt'), content)
             pyperclip.copy(content)
-            
+
             return result
-            
+
         except Exception as e:
             logger.error(f"Error processing image {image_path}: {str(e)}")
             raise
@@ -126,13 +123,8 @@ class OCRProcessor:
             格式化后的文本内容
         """
         content = ''
-        last = 0
         for i, box in enumerate(result.boxes):
-            if abs(box[1] - last) <= 5:
-                t = result.text[i] + " "
-            else:
-                t = result.text[i] + " \n"
-            last = box[1]
+            t = result.text[i]
             content += t
         return content
 
@@ -148,4 +140,4 @@ class OCRProcessor:
                 f.write(str(content))
         except Exception as e:
             logger.error(f"Error saving results to file {file_path}: {str(e)}")
-            raise 
+            raise
