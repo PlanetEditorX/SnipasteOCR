@@ -129,10 +129,16 @@ class OCRProcessor:
         # 替换错误冒号
         content = re.sub(r'(：)(\d+\.)', r'；\2', content)
 
-        # 按序号分组
+        # 按“数字序号+.”分组
         array = re.split(r'(\d+\.)', content)
         # 移除空字符串元素
         array = [item for item in array if item and not re.match(r'^\d+\.$', item)]
+        content = "\n".join(array)
+
+        # 按“（数字序号）”分组
+        array = re.split(r'([\(（]\d+[\)）])', content)
+        # 移除空字符串元素
+        array = [item for item in array if item and not re.match(r'^([\(（]\d+[\)）])$', item)]
         content = "\n".join(array)
 
         return content
