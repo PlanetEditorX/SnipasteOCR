@@ -4,6 +4,7 @@ OCR处理模块
 """
 
 import os
+import re
 import cv2
 import logging
 import fastdeploy as fd
@@ -16,7 +17,6 @@ logger = logging.getLogger(__name__)
 class OCRProcessor:
     def __init__(self, modelpath):
         """初始化OCR处理器
-
         Args:
             modelpath: 模型文件路径
         """
@@ -62,7 +62,6 @@ class OCRProcessor:
 
     def process_image(self, image_path):
         """处理图片
-
         Args:
             image_path: 图片路径
 
@@ -116,7 +115,6 @@ class OCRProcessor:
 
     def _parse_result(self, result):
         """解析OCR结果
-
         Args:
             result: OCR原始结果
 
@@ -127,11 +125,20 @@ class OCRProcessor:
         for i, box in enumerate(result.boxes):
             t = result.text[i]
             content += t
+
+        # 替换错误冒号
+        content = re.sub(r'(：)(\d+\.)', r'；\2', content)
+
+        # 按序号分组
+        array = re.split(r'(\d+\.)', content)
+        # 移除空字符串元素
+        array = [item for item in array if item and not re.match(r'^\d+\.$', item)]
+        print(array)
+        content = "\n".join(array)
         return content
 
     def _save_to_file(self, file_path, content):
         """保存结果到文件
-
         Args:
             file_path: 保存路径
             content: 文本内容
