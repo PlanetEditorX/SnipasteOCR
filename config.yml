@@ -1,7 +1,7 @@
 snipaste:
   modelpath: models
   path: C:\Users\DearX\Pictures\Saved Pictures
-  preview_enabled: true
+  preview_enabled: false
 translation:
   from_lang: auto
   secret_id: secret_id

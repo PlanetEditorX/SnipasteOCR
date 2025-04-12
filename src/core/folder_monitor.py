@@ -13,7 +13,7 @@ from src.core.ocr_processor import OCRProcessor
 
 class FolderMonitor(QObject):
     result_signal = pyqtSignal(str, object)  # 添加信号：图片路径和OCR结果
-    
+
     def __init__(self, path, modelpath):
         """初始化文件夹监控器
 
@@ -30,17 +30,17 @@ class FolderMonitor(QObject):
         self.observer.schedule(self.event_handler, path, recursive=False)
         self.processed_files = set()
         self.running = True
-        
+
         # 确保目录存在并可访问
         if not os.path.exists(path):
             os.makedirs(path)
         if not os.access(path, os.R_OK):
             raise PermissionError(f"No read permission for directory: {path}")
-            
+
         # 初始化已存在的文件列表
         self.processed_files = set(os.listdir(path))
         logging.debug(f"Initial files in directory: {self.processed_files}")
-        
+
         self.observer.start()
         logging.info(f"Started monitoring directory: {path}")
 
@@ -54,6 +54,8 @@ class FolderMonitor(QObject):
                     result = self.ocr_processor.process_image(full_path)
                     self.result_signal.emit(full_path, result)
                     logging.info(f"Successfully processed file: {full_path}")
+                    # 删除截图文件
+                    os.remove(full_path)
                 except Exception as e:
                     logging.error(f"Error processing file {full_path}: {str(e)}")
 
@@ -63,4 +65,4 @@ class FolderMonitor(QObject):
         self.running = False
         self.observer.stop()
         self.observer.join()
-        logging.info("Folder monitor stopped successfully") 
+        logging.info("Folder monitor stopped successfully")

@@ -104,7 +104,8 @@ class OCRProcessor:
 
             # 处理结果
             content = self._parse_result(result)
-            self._save_to_file(image_path.replace('.png', '.txt'), content)
+            # 不保存结果到文件
+            # self._save_to_file(image_path.replace('.png', '.txt'), content)
             pyperclip.copy(content)
 
             return result
