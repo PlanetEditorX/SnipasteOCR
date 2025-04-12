@@ -133,8 +133,8 @@ class OCRProcessor:
         array = re.split(r'(\d+\.)', content)
         # 移除空字符串元素
         array = [item for item in array if item and not re.match(r'^\d+\.$', item)]
-        print(array)
         content = "\n".join(array)
+
         return content
 
     def _save_to_file(self, file_path, content):
