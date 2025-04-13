@@ -54,8 +54,6 @@ class FolderMonitor(QObject):
                     result = self.ocr_processor.process_image(full_path)
                     self.result_signal.emit(full_path, result)
                     logging.info(f"Successfully processed file: {full_path}")
-                    # 删除截图文件
-                    os.remove(full_path)
                 except Exception as e:
                     logging.error(f"Error processing file {full_path}: {str(e)}")
 
