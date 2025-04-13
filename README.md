@@ -45,7 +45,7 @@
    ```bash
    # 安装依赖
    uv sync
-   
+
    # 运行程序
    uv main.py
    ```
@@ -54,14 +54,17 @@
    ```bash
    # 安装依赖
    pip install -r requirements.txt
-   
+
    # 运行程序
    python main.py
+
+   # 运行失败添加
+   .venv\Scripts\activate
    ```
 
    方式三：一键安装
    - 运行 `install.bat` 进行一键安装打包
-   
+
    方式四：直接使用
    - 从 [Releases](https://github.com/yourusername/SnipasteOCR/releases) 页面下载打包好的程序直接使用
 
