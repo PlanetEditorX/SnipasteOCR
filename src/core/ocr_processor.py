@@ -23,8 +23,13 @@ class OCRProcessor:
         setup_logging()
         logger.info(f"Initializing OCR processor with model path: {modelpath}")
 
-        self.det_model = os.path.join(modelpath, 'ch_PP-OCRv3_det_infer')
+        # 中文检测模型
+        # self.det_model = os.path.join(modelpath, 'ch_PP-OCRv3_det_infer')
+        self.det_model = os.path.join(modelpath, 'ch_PP-OCRv4_det_infer')
+        # 中文识别模型
+        # self.rec_model = os.path.join(modelpath, 'ch_PP-OCRv4_rec_infer')
         self.rec_model = os.path.join(modelpath, 'ch_PP-OCRv3_rec_infer')
+        # 文本方向分类模型
         self.cls_model = os.path.join(modelpath, 'ch_ppocr_mobile_v2.0_cls_infer')
         self.label_file = os.path.join(modelpath, 'labels.txt')
 
