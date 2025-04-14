@@ -79,19 +79,19 @@ class OCRProcessor:
 
             # 初始化检测模型
             det_option = option
-            det_option.set_trt_input_shape("x", [1, 3, 64, 64], [1, 3, 640, 640],[1, 3, 960, 960])
+            det_option.trt_option.set_shape("x", [1, 3, 64, 64], [1, 3, 640, 640],[1, 3, 960, 960])
             det_model = fd.vision.ocr.DBDetector(
                 self.det_model_file, self.det_params_file, runtime_option=det_option)
 
             # 初始化分类模型
             cls_option = option
-            cls_option.set_trt_input_shape("x", [1, 3, 48, 10], [10, 3, 48, 320],[64, 3, 48, 1024])
+            cls_option.trt_option.set_shape("x", [1, 3, 48, 10], [10, 3, 48, 320],[64, 3, 48, 1024])
             cls_model = fd.vision.ocr.Classifier(
                 self.cls_model_file, self.cls_params_file, runtime_option=cls_option)
 
             # 初始化识别模型
             rec_option = option
-            rec_option.set_trt_input_shape("x", [1, 3, 48, 10], [10, 3, 48, 320],[64, 3, 48, 2304])
+            rec_option.trt_option.set_shape("x", [1, 3, 48, 10], [10, 3, 48, 320],[64, 3, 48, 2304])
             rec_model = fd.vision.ocr.Recognizer(
                 self.rec_model_file, self.rec_params_file, self.rec_label_file, runtime_option=rec_option)
 

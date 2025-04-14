@@ -47,7 +47,10 @@
    uv sync
 
    # 运行程序
-   uv main.py
+   uv run main.py
+
+   # 新增依赖
+   uv add jieba
    ```
 
    方式二：使用 pip
